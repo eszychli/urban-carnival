@@ -1,6 +1,51 @@
-.cell input {
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+.selectors {
+    margin-bottom: 20px;
+}
+
+select {
+    display: block;
+    margin: 10px auto;
+    padding: 10px;
+    width: 90%; /* Adjust width to fit nicely */
+    font-size: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.cell select {
     display: block;
     margin: 5px 0;
     padding: 5px;
     box-sizing: border-box;
+    width: calc(100% - 10px); /* Adjust width to account for padding */
 }
