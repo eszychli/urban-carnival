@@ -3,101 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Schedule Manager</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>University Teacher Schedule</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        td {
+            min-width: 120px;
+            height: 80px;
+        }
+        .dropdown-container {
+            margin: 20px;
+        }
+        .dropdown-container select {
+            padding: 8px;
+            margin-right: 20px;
+        }
+        .schedule-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Teacher Schedule Manager</h1>
-        <div class="selectors">
-            <h2>Select Course and Students</h2>
-            <select id="globalCourseSelect">
-                <option value="">Select Course</option>
-                <option value="Mathematics">Mathematics</option>
-                <option value="Physics">Physics</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Biology">Biology</option>
-                <option value="Computer Science">Computer Science</option>
-            </select>
+    <h1>University Teacher Schedule</h1>
 
-            <select id="globalStudentSelect">
-                <option value="">Select Students</option>
-                <!-- Populate with numbers 0 to 100 -->
-                <script>
-                    for (let i = 0; i <= 100; i++) {
-                        document.write(`<option value="${i}">${i}</option>`);
-                    }
-                </script>
-            </select>
-        </div>
-        <div class="teachers">
-            <h2>Teachers</h2>
-            <select id="teacherSelect">
-                <option value="">Select a teacher</option>
-                <option value="John Doe">John Doe</option>
-                <option value="Jane Smith">Jane Smith</option>
-                <option value="Emily Johnson">Emily Johnson</option>
-                <option value="Michael Brown">Michael Brown</option>
-            </select>
-        </div>
-        <table id="scheduleTable">
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th colspan="2">Sunday</th>
-                    <th colspan="2">Tuesday</th>
-                    <th colspan="2">Thursday</th>
-                </tr>
-                <tr>
-                    <th></th>
-                    <th>Semester A</th>
-                    <th>Semester B</th>
-                    <th>Semester A</th>
-                    <th>Semester B</th>
-                    <th>Semester A</th>
-                    <th>Semester B</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>9:00 - 10:00</td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                </tr>
-                <tr>
-                    <td>10:00 - 11:00</td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                </tr>
-                <tr>
-                    <td>11:00 - 12:00</td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                </tr>
-                <tr>
-                    <td>20:00 - 21:00</td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                    <td class="cell"></td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="dropdown-container">
+        <label for="teacher-select">Teacher:</label>
+        <select id="teacher-select">
+            <option value="">Select Teacher</option>
+            <option value="Prof. A">Prof. A</option>
+            <option value="Prof. B">Prof. B</option>
+            <option value="Prof. C">Prof. C</option>
+        </select>
+
+        <label for="course-select">Course:</label>
+        <select id="course-select">
+            <option value="">Select Course</option>
+            <option value="Math 101">Math 101</option>
+            <option value="CS 202">CS 202</option>
+            <option value="Physics 303">Physics 303</option>
+        </select>
+
+        <label for="students-select">Students:</label>
+        <select id="students-select">
+            <option value="">Select Amount</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="60">60</option>
+            <option value="120">120</option>
+        </select>
     </div>
-    <script src="script.js"></script>
+
+    <table id="schedule-table">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th colspan="2">Sunday</th>
+                <th colspan="2">Tuesday</th>
+                <th colspan="2">Thursday</th>
+            </tr>
+            <tr>
+                <th></th>
+                <th>Semester A</th>
+                <th>Semester B</th>
+                <th>Semester A</th>
+                <th>Semester B</th>
+                <th>Semester A</th>
+                <th>Semester B</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Generate time rows from 9:00 to 21:00
+            const hours = [];
+            for (let i = 9; i < 22; i++) {
+                hours.push(`${i}:00 - ${i+1}:00`);
+            }
+
+            const $tableBody = $('#schedule-table tbody');
+            hours.forEach(hour => {
+                let row = `<tr>
+                            <td>${hour}</td>
+                            <td class="schedule-cell" data-day="sunday" data-semester="A"></td>
+                            <td class="schedule-cell" data-day="sunday" data-semester="B"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-semester="A"></td>
+                            <td class="schedule-cell" data-day="tuesday" data-semester="B"></td>
+                            <td class="schedule-cell" data-day="thursday" data-semester="A"></td>
+                            <td class="schedule-cell" data-day="thursday" data-semester="B"></td>
+                          </tr>`;
+                $tableBody.append(row);
+            });
+
+            // Handle cell click event
+            $('.schedule-cell').on('click', function() {
+                const teacher = $('#teacher-select').val();
+                const course = $('#course-select').val();
+                const students = $('#students-select').val();
+
+                if (teacher && course && students) {
+                    $(this).html(`<strong>${teacher}</strong><br>${course}<br>${students} students`);
+                } else {
+                    alert('Please select a teacher, course, and number of students before assigning.');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
