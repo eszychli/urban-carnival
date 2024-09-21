@@ -23,13 +23,34 @@
             background-color: #f4f4f4;
         }
         td {
-            min-width: 120px;
-            height: 100px;
+            min-width: 180px;
+            height: 150px;
         }
-        select {
-            width: 100%;
+        select, button {
             padding: 6px;
             margin-bottom: 6px;
+            display: block;
+            width: 100%;
+        }
+        .teacher-list {
+            margin-top: 8px;
+        }
+        .teacher-item {
+            background-color: #e3e3e3;
+            padding: 4px;
+            margin: 2px 0;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .remove-teacher-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 4px;
+            border-radius: 4px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -63,7 +84,7 @@
     <script>
         $(document).ready(function() {
             // Teachers, courses, and student amounts
-            const teachers = ["Select Teacher", "Prof. A", "Prof. B", "Prof. C"];
+            const teachers = ["Select Teacher", "Prof. A", "Prof. B", "Prof. C", "Prof. D", "Prof. E", "Prof. F"];
             const courses = ["Select Course", "Math 101", "CS 202", "Physics 303"];
             const studentCounts = ["Select Amount", "20", "50", "60", "120"];
 
@@ -91,6 +112,8 @@
             function generateDropdowns() {
                 return `
                     <select class="teacher-dropdown">${generateOptions(teachers)}</select>
+                    <button class="add-teacher-btn">Add Teacher</button>
+                    <div class="teacher-list"></div>
                     <select class="course-dropdown">${generateOptions(courses)}</select>
                     <select class="student-dropdown">${generateOptions(studentCounts)}</select>
                 `;
@@ -101,13 +124,47 @@
                 return items.map(item => `<option value="${item}">${item}</option>`).join('');
             }
 
-            // Optional: Handle change events to update values
-            $('.teacher-dropdown, .course-dropdown, .student-dropdown').on('change', function() {
-                let selectedTeacher = $(this).closest('.schedule-cell').find('.teacher-dropdown').val();
-                let selectedCourse = $(this).closest('.schedule-cell').find('.course-dropdown').val();
-                let selectedStudents = $(this).closest('.schedule-cell').find('.student-dropdown').val();
+            // Handle "Add Teacher" button click
+            $(document).on('click', '.add-teacher-btn', function() {
+                const $cell = $(this).closest('.schedule-cell');
+                const $teacherDropdown = $cell.find('.teacher-dropdown');
+                const selectedTeacher = $teacherDropdown.val();
+                
+                if (selectedTeacher === "Select Teacher") {
+                    alert("Please select a valid teacher.");
+                    return;
+                }
 
-                console.log(`Teacher: ${selectedTeacher}, Course: ${selectedCourse}, Students: ${selectedStudents}`);
+                const $teacherList = $cell.find('.teacher-list');
+                if ($teacherList.children().length >= 6) {
+                    alert("You can only add up to 6 teachers.");
+                    return;
+                }
+
+                // Add teacher to the list in the cell
+                $teacherList.append(`
+                    <div class="teacher-item">
+                        ${selectedTeacher} 
+                        <button class="remove-teacher-btn">Remove</button>
+                    </div>
+                `);
+
+                // Reset the dropdown to "Select Teacher"
+                $teacherDropdown.val("Select Teacher");
+            });
+
+            // Handle teacher removal
+            $(document).on('click', '.remove-teacher-btn', function() {
+                $(this).closest('.teacher-item').remove();
+            });
+
+            // Optional: Handle other dropdowns (course and students)
+            $(document).on('change', '.course-dropdown, .student-dropdown', function() {
+                const $cell = $(this).closest('.schedule-cell');
+                const selectedCourse = $cell.find('.course-dropdown').val();
+                const selectedStudents = $cell.find('.student-dropdown').val();
+                
+                console.log(`Course: ${selectedCourse}, Students: ${selectedStudents}`);
             });
         });
     </script>
