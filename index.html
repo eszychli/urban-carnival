@@ -85,6 +85,9 @@
             cursor: pointer;
             font-size: 16px;
         }
+        .rule-item {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -97,12 +100,13 @@
         <div class="tab" data-tab="program3">Program 3</div>
         <div class="tab" data-tab="program4">Program 4</div>
         <div class="tab" data-tab="program5">Program 5</div>
+        <div class="tab" data-tab="rules">Rules</div>
     </div>
 
     <!-- Auto-fill button -->
     <button id="auto-fill-btn">Auto-Fill All Programs</button>
 
-    <!-- Tab content (for each program) -->
+    <!-- Tab content for programs -->
     <div class="tab-content active" id="program1">
         <h2>Program 1 Schedule</h2>
         <table class="schedule-table"></table>
@@ -122,6 +126,16 @@
     <div class="tab-content" id="program5">
         <h2>Program 5 Schedule</h2>
         <table class="schedule-table"></table>
+    </div>
+
+    <!-- Rules page content -->
+    <div class="tab-content" id="rules">
+        <h2>Rules</h2>
+        <div class="rule-item">
+            <label>Teachers can't teach at the same time in different courses</label>
+            <input type="checkbox" id="rule-teacher-conflict" checked>
+        </div>
+        <!-- Add more rules as needed -->
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -222,44 +236,58 @@
 
             // Handle teacher removal
             $(document).on('click', '.remove-teacher-btn', function() {
-                $(this).closest('.teacher-item').remove();
+                $(this).parent().remove();
             });
 
-            // Tab functionality
-            $('.tab').on('click', function() {
+            // Handle tab navigation
+            $('.tab').click(function() {
                 const tabId = $(this).data('tab');
                 $('.tab').removeClass('active');
                 $(this).addClass('active');
                 $('.tab-content').removeClass('active');
-                $('#' + tabId).addClass('active');
+                $(`#${tabId}`).addClass('active');
             });
 
-            // Auto-fill functionality
-            $('#auto-fill-btn').on('click', function() {
+            // Auto-fill random data into all tables
+            $('#auto-fill-btn').click(function() {
+                const ruleTeacherConflict = $('#rule-teacher-conflict').is(':checked');
+
                 $('.schedule-cell').each(function() {
-                    const $teacherDropdown = $(this).find('.teacher-dropdown');
-                    const $courseDropdown = $(this).find('.course-dropdown');
-                    const $studentDropdown = $(this).find('.student-dropdown');
-                    
-                    // Randomly select a teacher, course, and student amount
-                    const randomTeacher = teachers[Math.floor(Math.random() * teachers.length)];
-                    const randomCourse = courses[Math.floor(Math.random() * courses.length)];
-                    const randomStudentCount = studentCounts[Math.floor(Math.random() * studentCounts.length)];
-                    
-                    // Add up to 6 random teachers
-                    const $teacherList = $(this).find('.teacher-list');
-                    $teacherList.empty(); // Clear current teachers
+                    const $cell = $(this);
+                    const $teacherList = $cell.find('.teacher-list');
+                    const $courseDropdown = $cell.find('.course-dropdown');
+                    const $studentDropdown = $cell.find('.student-dropdown');
+
+                    // Clear existing teachers
+                    $teacherList.empty();
+
+                    // Pick a random number of teachers (between 1 and 6) and fill the cell
+                    const randomTeachers = [];
                     for (let i = 0; i < Math.floor(Math.random() * 6) + 1; i++) {
                         const randomTeacher = teachers[Math.floor(Math.random() * teachers.length)];
+                        if (ruleTeacherConflict) {
+                            const isTeacherAlreadyAssigned = $('.teacher-list').text().includes(randomTeacher);
+                            if (!isTeacherAlreadyAssigned) {
+                                randomTeachers.push(randomTeacher);
+                            }
+                        } else {
+                            randomTeachers.push(randomTeacher);
+                        }
+                    }
+
+                    // Add teachers to the cell
+                    randomTeachers.forEach(teacher => {
                         $teacherList.append(`
                             <div class="teacher-item">
-                                ${randomTeacher} 
+                                ${teacher} 
                                 <button class="remove-teacher-btn">Remove</button>
                             </div>
                         `);
-                    }
-                    
+                    });
+
                     // Set the course and student amount
+                    const randomCourse = courses[Math.floor(Math.random() * courses.length)];
+                    const randomStudentCount = studentCounts[Math.floor(Math.random() * studentCounts.length)];
                     $courseDropdown.val(randomCourse);
                     $studentDropdown.val(randomStudentCount);
                 });
