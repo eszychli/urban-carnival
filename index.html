@@ -252,6 +252,7 @@
                 const ruleTeacherConflict = $('#rule-teacher-conflict').is(':checked');
                 const assignedTeachers = {};
 
+                // Iterate over each schedule cell
                 $('.schedule-cell').each(function() {
                     const $cell = $(this);
                     const $teacherList = $cell.find('.teacher-list');
@@ -269,16 +270,16 @@
                     let teachersToAdd = [];
                     let numberOfTeachers = Math.floor(Math.random() * 6) + 1; // Up to 6 teachers
 
-                    // Ensure unique teachers in this time slot if the rule is active
+                    // Temporary array to hold used teachers for this time slot
+                    let usedTeachers = [];
+
+                    // Fill teachers without violating the conflict rule
                     while (teachersToAdd.length < numberOfTeachers) {
                         const randomTeacher = teachers[Math.floor(Math.random() * teachers.length)];
-                        if (!ruleTeacherConflict || !assignedTeachers[randomTeacher]?.includes(timeSlot)) {
+                        if (!usedTeachers.includes(randomTeacher) &&
+                            (!ruleTeacherConflict || !assignedTeachers[randomTeacher]?.includes(timeSlot))) {
                             teachersToAdd.push(randomTeacher);
-                            if (assignedTeachers[randomTeacher]) {
-                                assignedTeachers[randomTeacher].push(timeSlot);
-                            } else {
-                                assignedTeachers[randomTeacher] = [timeSlot];
-                            }
+                            usedTeachers.push(randomTeacher);
                         }
                     }
 
@@ -290,6 +291,13 @@
                                 <button class="remove-teacher-btn">Remove</button>
                             </div>
                         `);
+                        
+                        // Track assigned teachers for the time slot
+                        if (assignedTeachers[teacher]) {
+                            assignedTeachers[teacher].push(timeSlot);
+                        } else {
+                            assignedTeachers[teacher] = [timeSlot];
+                        }
                     });
 
                     // Set the course and student amount
