@@ -8,6 +8,30 @@
         body {
             font-family: Arial, sans-serif;
         }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            cursor: pointer;
+            margin-right: 5px;
+            background-color: #f4f4f4;
+        }
+        .tab.active {
+            background-color: #e3e3e3;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        .tab-content.active {
+            display: block;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -57,28 +81,36 @@
 <body>
     <h1>University Teacher Schedule</h1>
 
-    <table id="schedule-table">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th colspan="2">Sunday</th>
-                <th colspan="2">Tuesday</th>
-                <th colspan="2">Thursday</th>
-            </tr>
-            <tr>
-                <th></th>
-                <th>Semester A</th>
-                <th>Semester B</th>
-                <th>Semester A</th>
-                <th>Semester B</th>
-                <th>Semester A</th>
-                <th>Semester B</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows will be dynamically added here -->
-        </tbody>
-    </table>
+    <!-- Tab navigation -->
+    <div class="tabs">
+        <div class="tab active" data-tab="program1">Program 1</div>
+        <div class="tab" data-tab="program2">Program 2</div>
+        <div class="tab" data-tab="program3">Program 3</div>
+        <div class="tab" data-tab="program4">Program 4</div>
+        <div class="tab" data-tab="program5">Program 5</div>
+    </div>
+
+    <!-- Tab content (for each program) -->
+    <div class="tab-content active" id="program1">
+        <h2>Program 1 Schedule</h2>
+        <table class="schedule-table"></table>
+    </div>
+    <div class="tab-content" id="program2">
+        <h2>Program 2 Schedule</h2>
+        <table class="schedule-table"></table>
+    </div>
+    <div class="tab-content" id="program3">
+        <h2>Program 3 Schedule</h2>
+        <table class="schedule-table"></table>
+    </div>
+    <div class="tab-content" id="program4">
+        <h2>Program 4 Schedule</h2>
+        <table class="schedule-table"></table>
+    </div>
+    <div class="tab-content" id="program5">
+        <h2>Program 5 Schedule</h2>
+        <table class="schedule-table"></table>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -94,18 +126,41 @@
                 hours.push(`${i}:00 - ${i+1}:00`);
             }
 
-            const $tableBody = $('#schedule-table tbody');
-            hours.forEach(hour => {
-                let row = `<tr>
-                            <td>${hour}</td>
-                            <td class="schedule-cell">${generateDropdowns()}</td>
-                            <td class="schedule-cell">${generateDropdowns()}</td>
-                            <td class="schedule-cell">${generateDropdowns()}</td>
-                            <td class="schedule-cell">${generateDropdowns()}</td>
-                            <td class="schedule-cell">${generateDropdowns()}</td>
-                            <td class="schedule-cell">${generateDropdowns()}</td>
-                          </tr>`;
-                $tableBody.append(row);
+            // Initialize each table
+            $('.schedule-table').each(function() {
+                const $tableBody = $('<tbody>');
+                const tableHeader = `
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th colspan="2">Sunday</th>
+                            <th colspan="2">Tuesday</th>
+                            <th colspan="2">Thursday</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>Semester A</th>
+                            <th>Semester B</th>
+                            <th>Semester A</th>
+                            <th>Semester B</th>
+                            <th>Semester A</th>
+                            <th>Semester B</th>
+                        </tr>
+                    </thead>`;
+                $(this).append(tableHeader).append($tableBody);
+
+                hours.forEach(hour => {
+                    let row = `<tr>
+                                <td>${hour}</td>
+                                <td class="schedule-cell">${generateDropdowns()}</td>
+                                <td class="schedule-cell">${generateDropdowns()}</td>
+                                <td class="schedule-cell">${generateDropdowns()}</td>
+                                <td class="schedule-cell">${generateDropdowns()}</td>
+                                <td class="schedule-cell">${generateDropdowns()}</td>
+                                <td class="schedule-cell">${generateDropdowns()}</td>
+                              </tr>`;
+                    $tableBody.append(row);
+                });
             });
 
             // Function to generate dropdowns for teacher, course, and student count
@@ -158,13 +213,13 @@
                 $(this).closest('.teacher-item').remove();
             });
 
-            // Optional: Handle other dropdowns (course and students)
-            $(document).on('change', '.course-dropdown, .student-dropdown', function() {
-                const $cell = $(this).closest('.schedule-cell');
-                const selectedCourse = $cell.find('.course-dropdown').val();
-                const selectedStudents = $cell.find('.student-dropdown').val();
-                
-                console.log(`Course: ${selectedCourse}, Students: ${selectedStudents}`);
+            // Tab functionality
+            $('.tab').on('click', function() {
+                const tabId = $(this).data('tab');
+                $('.tab').removeClass('active');
+                $(this).addClass('active');
+                $('.tab-content').removeClass('active');
+                $('#' + tabId).addClass('active');
             });
         });
     </script>
