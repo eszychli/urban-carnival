@@ -9,6 +9,27 @@
 <body>
     <div class="container">
         <h1>Teacher Schedule Manager</h1>
+        <div class="selectors">
+            <h2>Select Course and Students</h2>
+            <select id="globalCourseSelect">
+                <option value="">Select Course</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+                <option value="Computer Science">Computer Science</option>
+            </select>
+
+            <select id="globalStudentSelect">
+                <option value="">Select Students</option>
+                <!-- Populate with numbers 0 to 100 -->
+                <script>
+                    for (let i = 0; i <= 100; i++) {
+                        document.write(`<option value="${i}">${i}</option>`);
+                    }
+                </script>
+            </select>
+        </div>
         <div class="teachers">
             <h2>Teachers</h2>
             <select id="teacherSelect">
@@ -56,7 +77,15 @@
                     <td class="cell"></td>
                     <td class="cell"></td>
                 </tr>
-                <!-- Repeat for other time slots -->
+                <tr>
+                    <td>11:00 - 12:00</td>
+                    <td class="cell"></td>
+                    <td class="cell"></td>
+                    <td class="cell"></td>
+                    <td class="cell"></td>
+                    <td class="cell"></td>
+                    <td class="cell"></td>
+                </tr>
                 <tr>
                     <td>20:00 - 21:00</td>
                     <td class="cell"></td>
