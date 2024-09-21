@@ -135,6 +135,7 @@
             <label>Teachers can't teach at the same time in different courses</label>
             <input type="checkbox" id="rule-teacher-conflict" checked>
         </div>
+        <!-- Add more rules as needed -->
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -250,9 +251,7 @@
             // Auto-fill random data into all tables
             $('#auto-fill-btn').click(function() {
                 const ruleTeacherConflict = $('#rule-teacher-conflict').is(':checked');
-                const assignedTeachers = {};
 
-                // Iterate over each schedule cell
                 $('.schedule-cell').each(function() {
                     const $cell = $(this);
                     const $teacherList = $cell.find('.teacher-list');
@@ -262,45 +261,33 @@
                     // Clear existing teachers
                     $teacherList.empty();
 
-                    // Randomly fill teachers while checking for conflicts
-                    const randomCourse = courses[Math.floor(Math.random() * courses.length)];
-                    const randomStudentCount = studentCounts[Math.floor(Math.random() * studentCounts.length)];
-                    const timeSlot = $cell.closest('tr').find('td:first').text(); // Get time slot
-
-                    let teachersToAdd = [];
-                    let numberOfTeachers = Math.floor(Math.random() * 6) + 1; // Up to 6 teachers
-
-                    // Temporary array to hold used teachers for this time slot
-                    let usedTeachers = [];
-
-                    // Fill teachers without violating the conflict rule
-                    while (teachersToAdd.length < numberOfTeachers) {
+                    // Pick a random number of teachers (between 1 and 6) and fill the cell
+                    const randomTeachers = [];
+                    for (let i = 0; i < Math.floor(Math.random() * 6) + 1; i++) {
                         const randomTeacher = teachers[Math.floor(Math.random() * teachers.length)];
-                        if (!usedTeachers.includes(randomTeacher) &&
-                            (!ruleTeacherConflict || !assignedTeachers[randomTeacher]?.includes(timeSlot))) {
-                            teachersToAdd.push(randomTeacher);
-                            usedTeachers.push(randomTeacher);
+                        if (ruleTeacherConflict) {
+                            const isTeacherAlreadyAssigned = $('.teacher-list').text().includes(randomTeacher);
+                            if (!isTeacherAlreadyAssigned) {
+                                randomTeachers.push(randomTeacher);
+                            }
+                        } else {
+                            randomTeachers.push(randomTeacher);
                         }
                     }
 
                     // Add teachers to the cell
-                    teachersToAdd.forEach(teacher => {
+                    randomTeachers.forEach(teacher => {
                         $teacherList.append(`
                             <div class="teacher-item">
                                 ${teacher} 
                                 <button class="remove-teacher-btn">Remove</button>
                             </div>
                         `);
-                        
-                        // Track assigned teachers for the time slot
-                        if (assignedTeachers[teacher]) {
-                            assignedTeachers[teacher].push(timeSlot);
-                        } else {
-                            assignedTeachers[teacher] = [timeSlot];
-                        }
                     });
 
                     // Set the course and student amount
+                    const randomCourse = courses[Math.floor(Math.random() * courses.length)];
+                    const randomStudentCount = studentCounts[Math.floor(Math.random() * studentCounts.length)];
                     $courseDropdown.val(randomCourse);
                     $studentDropdown.val(randomStudentCount);
                 });
