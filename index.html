@@ -17,59 +17,24 @@
             border: 1px solid #ccc;
             padding: 8px;
             text-align: center;
+            vertical-align: top;
         }
         th {
             background-color: #f4f4f4;
         }
         td {
             min-width: 120px;
-            height: 80px;
+            height: 100px;
         }
-        .dropdown-container {
-            margin: 20px;
-        }
-        .dropdown-container select {
-            padding: 8px;
-            margin-right: 20px;
-        }
-        .schedule-cell {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
+        select {
+            width: 100%;
+            padding: 6px;
+            margin-bottom: 6px;
         }
     </style>
 </head>
 <body>
     <h1>University Teacher Schedule</h1>
-
-    <div class="dropdown-container">
-        <label for="teacher-select">Teacher:</label>
-        <select id="teacher-select">
-            <option value="">Select Teacher</option>
-            <option value="Prof. A">Prof. A</option>
-            <option value="Prof. B">Prof. B</option>
-            <option value="Prof. C">Prof. C</option>
-        </select>
-
-        <label for="course-select">Course:</label>
-        <select id="course-select">
-            <option value="">Select Course</option>
-            <option value="Math 101">Math 101</option>
-            <option value="CS 202">CS 202</option>
-            <option value="Physics 303">Physics 303</option>
-        </select>
-
-        <label for="students-select">Students:</label>
-        <select id="students-select">
-            <option value="">Select Amount</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="60">60</option>
-            <option value="120">120</option>
-        </select>
-    </div>
 
     <table id="schedule-table">
         <thead>
@@ -97,6 +62,11 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
+            // Teachers, courses, and student amounts
+            const teachers = ["Select Teacher", "Prof. A", "Prof. B", "Prof. C"];
+            const courses = ["Select Course", "Math 101", "CS 202", "Physics 303"];
+            const studentCounts = ["Select Amount", "20", "50", "60", "120"];
+
             // Generate time rows from 9:00 to 21:00
             const hours = [];
             for (let i = 9; i < 22; i++) {
@@ -107,27 +77,37 @@
             hours.forEach(hour => {
                 let row = `<tr>
                             <td>${hour}</td>
-                            <td class="schedule-cell" data-day="sunday" data-semester="A"></td>
-                            <td class="schedule-cell" data-day="sunday" data-semester="B"></td>
-                            <td class="schedule-cell" data-day="tuesday" data-semester="A"></td>
-                            <td class="schedule-cell" data-day="tuesday" data-semester="B"></td>
-                            <td class="schedule-cell" data-day="thursday" data-semester="A"></td>
-                            <td class="schedule-cell" data-day="thursday" data-semester="B"></td>
+                            <td class="schedule-cell">${generateDropdowns()}</td>
+                            <td class="schedule-cell">${generateDropdowns()}</td>
+                            <td class="schedule-cell">${generateDropdowns()}</td>
+                            <td class="schedule-cell">${generateDropdowns()}</td>
+                            <td class="schedule-cell">${generateDropdowns()}</td>
+                            <td class="schedule-cell">${generateDropdowns()}</td>
                           </tr>`;
                 $tableBody.append(row);
             });
 
-            // Handle cell click event
-            $('.schedule-cell').on('click', function() {
-                const teacher = $('#teacher-select').val();
-                const course = $('#course-select').val();
-                const students = $('#students-select').val();
+            // Function to generate dropdowns for teacher, course, and student count
+            function generateDropdowns() {
+                return `
+                    <select class="teacher-dropdown">${generateOptions(teachers)}</select>
+                    <select class="course-dropdown">${generateOptions(courses)}</select>
+                    <select class="student-dropdown">${generateOptions(studentCounts)}</select>
+                `;
+            }
 
-                if (teacher && course && students) {
-                    $(this).html(`<strong>${teacher}</strong><br>${course}<br>${students} students`);
-                } else {
-                    alert('Please select a teacher, course, and number of students before assigning.');
-                }
+            // Function to create <option> tags from an array of values
+            function generateOptions(items) {
+                return items.map(item => `<option value="${item}">${item}</option>`).join('');
+            }
+
+            // Optional: Handle change events to update values
+            $('.teacher-dropdown, .course-dropdown, .student-dropdown').on('change', function() {
+                let selectedTeacher = $(this).closest('.schedule-cell').find('.teacher-dropdown').val();
+                let selectedCourse = $(this).closest('.schedule-cell').find('.course-dropdown').val();
+                let selectedStudents = $(this).closest('.schedule-cell').find('.student-dropdown').val();
+
+                console.log(`Teacher: ${selectedTeacher}, Course: ${selectedCourse}, Students: ${selectedStudents}`);
             });
         });
     </script>
