@@ -1,39 +1,32 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
+document.addEventListener("DOMContentLoaded", () => {
+    const teacherSelect = document.getElementById("teacherSelect");
+    const cells = document.querySelectorAll(".cell");
 
-.container {
-    max-width: 800px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+    cells.forEach(cell => {
+        // Create input fields
+        const teacherInput = document.createElement("input");
+        teacherInput.type = "text";
+        teacherInput.placeholder = "Teacher";
+        teacherInput.style.width = "100%";
 
-h1, h2 {
-    text-align: center;
-}
+        const courseInput = document.createElement("input");
+        courseInput.type = "text";
+        courseInput.placeholder = "Course";
+        courseInput.style.width = "100%";
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
+        const studentInput = document.createElement("input");
+        studentInput.type = "number";
+        studentInput.placeholder = "Students";
+        studentInput.style.width = "100%";
 
-th, td {
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #ddd;
-}
+        // Append inputs to the cell
+        cell.appendChild(teacherInput);
+        cell.appendChild(courseInput);
+        cell.appendChild(studentInput);
 
-.cell {
-    cursor: pointer;
-}
-
-.cell:hover {
-    background-color: #f0f0f0;
-}
+        // Set default teacher input from the select dropdown
+        teacherInput.addEventListener("focus", () => {
+            teacherInput.value = teacherSelect.value;
+        });
+    });
+});
